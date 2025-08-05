@@ -59,29 +59,4 @@ public class StudentController {
         return ResponseEntity.status(HttpStatus.OK).body(studentRecord);
     }
 
-    //pagination and sorting
-    @GetMapping("/five/{name}")
-    public ResponseEntity<List<StudentRecord>> getStudentByNameFiveRecords(@PathVariable String name){
-        List<StudentRecord> studentRecords=studentServiceV4.getFiveStudentRecords(name);
-        return ResponseEntity.status(HttpStatus.OK).body(studentRecords);
-    }
-
-    @GetMapping("/sort")
-    public ResponseEntity<List<StudentRecord>> getStudentRecords(){
-        List<StudentRecord> studentRecords=studentServiceV4.getStudentRecordsInSort();
-        return ResponseEntity.status(HttpStatus.OK).body(studentRecords);
-    }
-
-    @GetMapping("/pageAndSort/{name}")
-    public ResponseEntity<List<StudentRecord>> getStudentRecordsWithNameAndSort(@PathVariable String name){
-        List<StudentRecord> studentRecords=studentServiceV4.getStudentRecordsWithNameAndSort(name);
-        return ResponseEntity.status(HttpStatus.OK).body(studentRecords);
-    }
-
-    @GetMapping("/pages/{name}")
-    public ResponseEntity<List<StudentRecord>> getStudentPages(@PathVariable String name){
-        List<StudentRecord> studentRecords=studentServiceV4.getStudentsAndSort(name);
-        return ResponseEntity.status(HttpStatus.OK).body(studentRecords);
-    }
-
 }
