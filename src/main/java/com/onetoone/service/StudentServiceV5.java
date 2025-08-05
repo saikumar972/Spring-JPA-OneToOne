@@ -1,10 +1,12 @@
 package com.onetoone.service;
 
+import com.onetoone.dao.StudentRepo;
 import com.onetoone.dto.StudentData;
 import com.onetoone.dto.StudentDetails;
 import com.onetoone.dto.StudentRecord;
 import com.onetoone.entity.Address;
 import com.onetoone.entity.Student;
+import com.onetoone.predicates.UserSpecification;
 import com.onetoone.utility.StudentResponseMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -12,6 +14,7 @@ import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +25,8 @@ public class StudentServiceV5 {
     EntityManager entityManager;
     @Autowired
     StudentResponseMapper studentResponseMapper;
+    @Autowired
+    StudentRepo studentRepo;
 
     public List<StudentData> dynamicNativeQuery(String name,String state){
         StringBuilder queryBuilder=new StringBuilder("select s.name,s.department,a.street,a.district,a.state ");
@@ -112,7 +117,6 @@ public class StudentServiceV5 {
         if(!predicates.isEmpty()){
             criteriaQuery.where(cb.and(predicates.toArray(new Predicate[0])));
         }
-        //cb.and(predicate1,predicate2);
         //query to execute
         TypedQuery<Student> query = entityManager.createQuery(criteriaQuery);
         //map to result
@@ -180,6 +184,48 @@ public class StudentServiceV5 {
         query.setMaxResults(2);
         return query.getResultList()
                 .stream().map(result->new StudentDetails((String)result[0],(String)result[1],(String)result[2])).toList();
+    }
+
+    //specification API
+    public List<StudentDetails> getStudentDetailsUsingSpecificationAPI(String name,String state){
+        //create criteriaBuilder
+        CriteriaBuilder cb=entityManager.getCriteriaBuilder();
+        //create criteriaQuery
+        CriteriaQuery<Object[]> criteriaQuery=cb.createQuery(Object[].class);
+        //source
+        Root<Student> student=criteriaQuery.from(Student.class);
+        //join
+        Join<Student,Address> address=student.join("address",JoinType.INNER);
+        //grabbing fields
+        criteriaQuery.multiselect(student.get("name"), student.get("department"), address.get("state"));
+        //where
+       Specification<Student> specification1=UserSpecification.equalsName(name);
+        Specification<Student> specification2=UserSpecification.equalsState(state);
+        Specification<Student> combinedSpecification=specification1.and(specification2);
+        Predicate predicate = combinedSpecification.toPredicate(student, criteriaQuery, cb);
+        criteriaQuery.where(predicate);
+        //ordering
+        criteriaQuery.orderBy(cb.desc(cb.lower(student.get("department"))));
+
+        //query
+        TypedQuery<Object[]> query=entityManager.createQuery(criteriaQuery);
+        //page and records
+        query.setFirstResult(0);
+        query.setMaxResults(2);
+        return query.getResultList()
+                .stream().map(result->new StudentDetails((String)result[0],(String)result[1],(String)result[2])).toList();
+    }
+
+    public List<StudentRecord> getStudentDetailsUsingSpecificationAPIV2(String name, String state){
+       Specification<Student> studentSpecification=Specification
+               .where(UserSpecification.joinAddress())
+               .and(UserSpecification.equalsName(name))
+               .and(UserSpecification.equalsState(state));
+
+        return studentRepo.findAll(studentSpecification)
+                .stream()
+                .map(studentResponseMapper)
+                .toList();
     }
 
 }

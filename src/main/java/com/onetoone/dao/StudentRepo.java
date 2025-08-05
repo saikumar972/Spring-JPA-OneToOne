@@ -5,17 +5,14 @@ import com.onetoone.entity.Student;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface StudentRepo extends JpaRepository<Student, Integer> {
+public interface StudentRepo extends JpaRepository<Student, Integer> , JpaSpecificationExecutor<Student> {
     //pagination and sorting
     @Query(value = "select s from Student s where s.name like concat(:name,'%')")
     List<Student> studentRecordsStartWith(@Param("name") String name, Pageable pageable);

@@ -148,6 +148,22 @@ public class StudentControllerV2 {
         return ResponseEntity.status(HttpStatus.OK).body(studentDetails);
     }
 
+    //specification API
+
+    @GetMapping("/names/v15/{name}")
+    public ResponseEntity<List<StudentDetails>> getStudentDetailsUsingSpecificationAPI(@PathVariable String name,@RequestParam(value = "state",required = false) String state){
+        List<StudentDetails> studentDetails=studentServiceV5.getStudentDetailsUsingSpecificationAPI(name,state);
+        return ResponseEntity.status(HttpStatus.OK).body(studentDetails);
+    }
+
+
+    @GetMapping("/names/v16/{name}")
+    public ResponseEntity<List<StudentRecord>> getStudentDetailsUsingSpecificationAPIV2(@PathVariable String name,@RequestParam(value = "state",required = false) String state){
+        List<StudentRecord> studentDetails=studentServiceV5.getStudentDetailsUsingSpecificationAPIV2(name,state);
+        return ResponseEntity.status(HttpStatus.OK).body(studentDetails);
+    }
+
+
 
 
 
