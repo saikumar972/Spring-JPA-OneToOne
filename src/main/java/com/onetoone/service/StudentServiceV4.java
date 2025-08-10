@@ -67,6 +67,11 @@ public class StudentServiceV4 {
         return students.stream().map(studentResponseMapper).toList();
     }
 
+    public Page<Student> getStudentDetailsInPagesV2(String name, Pageable pageable) {
+        return studentRepo.getStudentsPagesByName(name, pageable);
+    }
+
+
     //queries
     //fetch the student details
     public StudentRecord getStudentDetailsByName(String name){
@@ -143,5 +148,5 @@ public class StudentServiceV4 {
     public List<StudentDetails> getStudentDetailsNativeV2(String name){
         return studentRepo.studentDetailsNativeV2(name);
     }
-
+    
 }

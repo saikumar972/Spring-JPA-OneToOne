@@ -23,6 +23,9 @@ public interface StudentRepo extends JpaRepository<Student, Integer> , JpaSpecif
     @Query(value = "select s from Student s where s.name=:name")
      Page<Student> findStudentsWithNameAndSort(@Param("name") String name, Pageable pageable);
 
+    @Query(value = "select s from Student s where s.name=:name")
+    Page<Student> getStudentsPagesByName(@Param("name") String name,Pageable pageable);
+
     //joins
     @Query(value = "select s from Student s join s.address where s.name=:name")
     Student getStudentDetailsByName(@Param("name") String name);
