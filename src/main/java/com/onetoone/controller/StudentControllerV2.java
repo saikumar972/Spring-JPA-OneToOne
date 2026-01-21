@@ -14,8 +14,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -27,12 +27,11 @@ import java.util.List;
 @RestController
 @RequestMapping("/student/v2")
 @Tag(name = "Student controller v2", description = "This controller is meant for fetching the student data in multiple sources")
+@RequiredArgsConstructor
 public class StudentControllerV2 {
-    @Autowired
-    StudentServiceV4 studentServiceV4;
+    private final StudentServiceV4 studentServiceV4;
 
-    @Autowired
-    StudentServiceV5 studentServiceV5;
+    private final StudentServiceV5 studentServiceV5;
 
     //pagination and sorting
     @Operation(summary = "fetch 5 names by name", description = "fetching the first 5 records by name")

@@ -128,7 +128,9 @@ public class StudentServiceV4 {
         int rowsImpacted=studentRepo.updateStudentById(id,name);
         log.info("StudentServiceV4 :: updateStudentName Method invoked and impacted rows {}",rowsImpacted);
         Student student=studentRepo.findById(id).orElseThrow(()->new IllegalArgumentException("Invalid id "+id));
-        return studentResponseMapper.apply(student);
+        StudentRecord studentRecord= studentResponseMapper.apply(student);
+        System.out.println(studentRecord.studentId());
+        return studentRecord;
     }
 
     public StudentRecord deleteStudentById(int id){
